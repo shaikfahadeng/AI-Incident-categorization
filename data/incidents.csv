@@ -1,0 +1,11 @@
+text,category
+"Application is slow after deployment","Application"
+"Users are unable to login to the application","Application"
+"Database connection timeout observed","Database"
+"High CPU usage on production server","Infrastructure"
+"Disk space is full on Linux server","Infrastructure"
+"User unable to reset password","Access"
+"New user onboarding access issue","Access"
+"Network latency observed between services","Network"
+"VPN connection drops frequently","Network"
+"Email service is not working","Application"
