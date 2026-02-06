@@ -13,3 +13,7 @@ text,category
 "Unable to connect to production database","Database"
 "Database service restarted unexpectedly","Database"
 "Primary database node is down","Database"
+"Database query timeout error on PostgreSQL","Database"
+"MySQL database connection refused","Database"
+"Oracle DB listener not responding","Database"
+"Primary database node replication failure","Database"
