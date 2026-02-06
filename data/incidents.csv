@@ -9,3 +9,7 @@ text,category
 "Network latency observed between services","Network"
 "VPN connection drops frequently","Network"
 "Email service is not working","Application"
+"Database query taking too long","Database"
+"Unable to connect to production database","Database"
+"Database service restarted unexpectedly","Database"
+"Primary database node is down","Database"
