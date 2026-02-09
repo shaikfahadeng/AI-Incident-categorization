@@ -29,5 +29,10 @@ class Incident(BaseModel):
 @app.post("/classify")
 def classify_incident(incident: Incident):
     X_new = vectorizer.transform([incident.text])
-    prediction = model.predict(X_new)
-    return {"category": prediction[0]}
+    prediction = model.predict(X_new)[0]
+    confidence = max(model.predict_proba(X_new)[0])
+
+    return {
+        "category": prediction,
+        "confidence": round(confidence, 2)
+    }
