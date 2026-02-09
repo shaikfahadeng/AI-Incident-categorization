@@ -1,10 +1,11 @@
+# imports
 import csv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-# Load and train model (simple & local)
+# data loading + model training
 texts = []
 labels = []
 
@@ -20,38 +21,24 @@ X = vectorizer.fit_transform(texts)
 model = LogisticRegression()
 model.fit(X, labels)
 
-# FastAPI app
+# FastAPI app MUST be here
 app = FastAPI(title="AI Incident Categorization API")
 
+# request model
 class Incident(BaseModel):
     text: str
 
+# classify endpoint
 @app.post("/classify")
 def classify_incident(incident: Incident):
     X_new = vectorizer.transform([incident.text])
     prediction = model.predict(X_new)[0]
-    confidence = max(model.predict_proba(X_new)[0])
+    return {"category": prediction}
 
-    return {
-        "category": prediction,
-        "confidence": round(confidence, 2)
-    }
-    @app.get("/health")
+# health endpoint (IMPORTANT: must be AFTER app definition)
+@app.get("/health")
 def health_check():
-    try:
-        # basic sanity checks
-        if model and vectorizer:
-            return {
-                "status": "UP",
-                "model_loaded": True
-            }
-        else:
-            return {
-                "status": "DOWN",
-                "model_loaded": False
-            }
-    except Exception as e:
-        return {
-            "status": "DOWN",
-            "error": str(e)
-        }
+    return {
+        "status": "UP",
+        "model_loaded": True
+    }
