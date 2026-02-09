@@ -36,3 +36,22 @@ def classify_incident(incident: Incident):
         "category": prediction,
         "confidence": round(confidence, 2)
     }
+    @app.get("/health")
+def health_check():
+    try:
+        # basic sanity checks
+        if model and vectorizer:
+            return {
+                "status": "UP",
+                "model_loaded": True
+            }
+        else:
+            return {
+                "status": "DOWN",
+                "model_loaded": False
+            }
+    except Exception as e:
+        return {
+            "status": "DOWN",
+            "error": str(e)
+        }
