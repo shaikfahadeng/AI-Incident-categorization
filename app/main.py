@@ -33,12 +33,14 @@ class Incident(BaseModel):
 def classify_incident(incident: Incident):
     X_new = vectorizer.transform([incident.text])
     prediction = model.predict(X_new)[0]
-    return {"category": prediction}
+    confidence = max(model.predict_proba(X_new)[0])
 
-# health endpoint (IMPORTANT: must be AFTER app definition)
-@app.get("/health")
-def health_check():
+    decision = "AUTO-CATEGORIZED"
+    if confidence < 0.65:
+        decision = "MANUAL_REVIEW_REQUIRED"
+
     return {
-        "status": "UP",
-        "model_loaded": True
+        "category": prediction,
+        "confidence": round(confidence, 2),
+        "decision": decision
     }
