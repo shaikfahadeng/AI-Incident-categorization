@@ -1,0 +1,29 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+# Step 1: Use Python
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+  displayName: 'Use Python 3'
+
+# Step 2: Install dependencies
+- script: |
+    python -m pip install --upgrade pip
+    pip install fastapi uvicorn scikit-learn
+  displayName: 'Install dependencies'
+
+# Step 3: Start FastAPI app in background
+- script: |
+    nohup uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+    sleep 5
+  displayName: 'Start API service'
+
+# Step 4: Run health check (GATE)
+- script: |
+    python scripts/health_check.py
+  displayName: 'Post-deployment health check'
