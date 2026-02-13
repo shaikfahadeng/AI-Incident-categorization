@@ -1,11 +1,10 @@
-# imports
 import csv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-# data loading + model training
+# Load training data
 texts = []
 labels = []
 
@@ -21,14 +20,12 @@ X = vectorizer.fit_transform(texts)
 model = LogisticRegression()
 model.fit(X, labels)
 
-# FastAPI app MUST be here
 app = FastAPI(title="AI Incident Categorization API")
 
-# request model
 class Incident(BaseModel):
     text: str
 
-# classify endpoint
+# UPDATED CLASSIFIER WITH CONFIDENCE + DECISION
 @app.post("/classify")
 def classify_incident(incident: Incident):
     X_new = vectorizer.transform([incident.text])
@@ -44,4 +41,11 @@ def classify_incident(incident: Incident):
         "category": prediction,
         "confidence": round(confidence, 2),
         "decision": decision
+    }
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "UP",
+        "model_loaded": True
     }
