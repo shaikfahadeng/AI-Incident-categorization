@@ -45,4 +45,3 @@ def classify_incident(incident: Incident):
         "confidence": round(confidence, 2),
         "decision": decision
     }
-
