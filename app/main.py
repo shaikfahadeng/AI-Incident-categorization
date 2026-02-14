@@ -24,7 +24,11 @@ app = FastAPI(title="AI Incident Categorization API")
 
 class Incident(BaseModel):
     text: str
-
+class ServiceNowTicket(BaseModel):
+    number: str
+    short_description: str
+    description: str
+    priority: str
 # UPDATED CLASSIFIER WITH CONFIDENCE + DECISION
 @app.post("/classify")
 def classify_incident(incident: Incident):
@@ -49,3 +53,23 @@ def health_check():
         "status": "UP",
         "model_loaded": True
     }
+@app.post("/ingest/servicenow")
+def ingest_servicenow(ticket: ServiceNowTicket):
+    combined_text = f"{ticket.short_description} {ticket.description}"
+
+    X_new = vectorizer.transform([combined_text])
+    prediction = model.predict(X_new)[0]
+    confidence = max(model.predict_proba(X_new)[0])
+
+    decision = "AUTO-CATEGORIZED"
+    if confidence < 0.65:
+        decision = "MANUAL_REVIEW_REQUIRED"
+
+    return {
+        "ticket_number": ticket.number,
+        "predicted_category": prediction,
+        "confidence": round(confidence, 2),
+        "decision": decision,
+        "priority": ticket.priority
+    }
+
