@@ -1,3 +1,6 @@
+from prometheus_fastapi_instrumentator import Instrumentator
+app = FastAPI(title="AI Incident Categorization API")
+Instrumentator().instrument(app).expose(app)
 import csv
 from fastapi import FastAPI
 from pydantic import BaseModel
